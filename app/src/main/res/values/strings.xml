@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BasePackage</string>
+    <string name="network_error">network error</string>
 </resources>

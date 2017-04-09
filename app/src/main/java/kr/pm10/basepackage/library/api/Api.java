@@ -4,16 +4,8 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
 
-import kr.perfectree.heydealer_library.api.interceptor.cookie.PersistentCookieStore;
-import kr.perfectree.heydealer_library.api.interceptor.customer.CustomerAppInterceptor;
-import kr.perfectree.heydealer_library.api.interceptor.customer.CustomerNetworkInterceptor;
-import kr.perfectree.heydealer_library.api.interceptor.dealer.DealerAppInterceptor;
-import kr.perfectree.heydealer_library.api.interceptor.dealer.DealerNetworkInterceptor;
-import kr.perfectree.heydealer_library.api.service.HeydealerApiService;
-import kr.perfectree.heydealer_library.library.Constant;
-import kr.perfectree.heydealer_library.library.util.Utils;
-import kr.perfectree.heydealer_library.ui.base.LibraryApplication;
 import kr.pm10.basepackage.BaseApplication;
+import kr.pm10.basepackage.Constant;
 import kr.pm10.basepackage.library.api.cookie.PersistentCookieStore;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
@@ -50,35 +42,27 @@ public class Api {
         PersistentCookieStore cookieStore = new PersistentCookieStore(BaseApplication.baseContext);
         cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL);
 
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
         Builder builder = new Builder();
-        if (Utils.isCustomerPackage()) {
-            builder.cookieJar(new JavaNetCookieJar(cookieManager));
-            builder.addInterceptor(new CustomerAppInterceptor());
-            builder.addNetworkInterceptor(new CustomerNetworkInterceptor());
-        } else if (Utils.isDealerPackage()) {
-            builder.cookieJar(new JavaNetCookieJar(cookieManager));
-            builder.addNetworkInterceptor(new DealerNetworkInterceptor());
-            builder.addInterceptor(new DealerAppInterceptor());
-        }
+        builder.cookieJar(new JavaNetCookieJar(cookieManager));
         builder.readTimeout(TIME_OUT, TimeUnit.SECONDS);
         builder.writeTimeout(TIME_OUT, TimeUnit.SECONDS);
         builder.connectTimeout(TIME_OUT, TimeUnit.SECONDS);
-
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.interceptors().add(httpLoggingInterceptor);
 
 
         okHttpClient = builder.build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(Constant.HEYDEALER_API_BASE_URL)
+                .baseUrl(Constant.BAS_API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .client(okHttpClient)
                 .build();
 
-        baseApiService = retrofit.create(HeydealerApiService.class);
+        baseApiService = retrofit.create(BaseApiService.class);
     }
 
 }

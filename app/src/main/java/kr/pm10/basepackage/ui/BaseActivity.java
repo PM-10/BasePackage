@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import butterknife.ButterKnife;
+import kr.pm10.basepackage.library.api.Api;
 import kr.pm10.basepackage.library.otto.BusProvider;
 import kr.pm10.basepackage.utils.DLog;
 
@@ -27,6 +28,7 @@ public class BaseActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         ButterKnife.bind(this);
         mIntent = getIntent();
+        Api.getInstance().setApiService();
     }
 
     @Override
